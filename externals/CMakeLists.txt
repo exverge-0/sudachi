@@ -152,7 +152,7 @@ endif()
 
 # Vulkan-Headers
 if (SUDACHI_USE_EXTERNAL_VULKAN_HEADERS)
-    add_subdirectory(Vulkan-Headers)
+    add_subdirectory(vulkan-headers)
 endif()
 
 # Vulkan-Utility-Libraries

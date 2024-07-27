@@ -1197,10 +1197,6 @@ void RasterizerOpenGL::SyncBlendState() {
     }
 }
 
-bool RasterizerOpenGL::IsAnyFloat(Tegra::Engines::Maxwell3D::Regs::VertexAttribute attribute) {
-    return attribute.type == Tegra::Engines::Maxwell3D::Regs::VertexAttribute::Type::Float;
-};
-
 void RasterizerOpenGL::SyncLogicOpState() {
     auto& flags = maxwell3d->dirty.flags;
     if (!flags[Dirty::LogicOp]) {
@@ -1211,17 +1207,18 @@ void RasterizerOpenGL::SyncLogicOpState() {
     auto& regs = maxwell3d->regs;
 
     if (device.IsAmd()) {
+        using namespace Tegra::Engines;
         struct In {
-            const Tegra::Engines::Maxwell3D::Regs::VertexAttribute::Type d;
-            In(Tegra::Engines::Maxwell3D::Regs::VertexAttribute::Type n) : d(n) {}
-            bool operator()(Tegra::Engines::Maxwell3D::Regs::VertexAttribute n) const {
+            const Maxwell3D::Regs::VertexAttribute::Type d;
+            In(Maxwell3D::Regs::VertexAttribute::Type n) : d(n) {}
+            bool operator()(Maxwell3D::Regs::VertexAttribute n) const {
                 return n.type == d;
             }
         };
 
         bool has_float =
             std::any_of(regs.vertex_attrib_format.begin(), regs.vertex_attrib_format.end(),
-                        In(Tegra::Engines::Maxwell3D::Regs::VertexAttribute::Type::Float));
+                        In(Maxwell3D::Regs::VertexAttribute::Type::Float));
         regs.logic_op.enable = static_cast<u32>(!has_float);
     }
 
